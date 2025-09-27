@@ -1,0 +1,45 @@
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/onyx-backend:$COMMIT_SHA', '.']
+    dir: 'backend'
+
+  # Push the Docker image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/onyx-backend:$COMMIT_SHA']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'onyx-backend'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/onyx-backend:$COMMIT_SHA'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - 'us-central1'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+      - '--memory'
+      - '2Gi'
+      - '--cpu'
+      - '1'
+      - '--max-instances'
+      - '10'
+      - '--min-instances'
+      - '1'
+      - '--set-env-vars'
+      - 'FILE_STORE_TYPE=gcp,GCP_PROJECT_ID=$PROJECT_ID,GCP_BUCKET_NAME=onyx-files-$PROJECT_ID'
+
+# Store images in Google Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/onyx-backend:$COMMIT_SHA'
+
+# Build options
+options:
+  machineType: 'E2_HIGHCPU_8'
+  diskSizeGb: 100
+  logging: CLOUD_LOGGING_ONLY
