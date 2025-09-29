@@ -1,3 +1,5 @@
+cd RAG_With_Onyx/onyx
+
 "use client";
 
 import React from "react";
