@@ -1,7 +1,0 @@
-# Local Directory MCP Server Requirements
-# Enhanced MCP server with file download and Onyx ingestion capabilities
-
-fastmcp>=2.11.3
-httpx>=0.28.1  # For testing HTTP transport
-aiohttp>=3.8.0  # For async HTTP requests to Onyx
-aiofiles>=23.0.0  # For async file operations
